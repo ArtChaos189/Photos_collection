@@ -1,19 +1,20 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
+
+import { Collection } from "./components/Collection";
+
+import { categories } from "./__mocks__/categories";
+
 import "./index.scss";
-import { Collection } from "./Collection";
 
-const cats = [{ name: "Все" }, { name: "Море" }, { name: "Горы" }, { name: "Архитектура" }, { name: "Города" }];
-
-function App() {
-  const [categoryId, setCategoryId] = useState(0);
-  const [page, setPage] = useState(1);
-  const [isLoading, setIsLoading] = useState(true);
-  const [searchValue, setSearchValue] = useState("");
+export const App = () => {
   const [collections, setCollections] = useState([]);
+  const [categoryId, setCategoryId] = useState(0);
+  const [isLoading, setIsloading] = useState(true);
+  const [searchValue, setSearchValue] = useState("");
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
-    setIsLoading(true);
-
+    setIsloading(true);
     const category = categoryId ? `category=${categoryId}` : "";
 
     fetch(`https://637111420399d1995d8a704c.mockapi.io/photos?page=${page}&limit=3&${category} `)
@@ -25,7 +26,7 @@ function App() {
         console.warn(err);
         alert("Ошибка при получении данных");
       })
-      .finally(() => setIsLoading(false));
+      .finally(() => setIsloading(false));
   }, [categoryId, page]);
 
   return (
@@ -33,14 +34,13 @@ function App() {
       <h1>Моя коллекция фотографий</h1>
       <div className="top">
         <ul className="tags">
-          {cats.map((obj, i) => (
+          {categories.map((obj, i) => (
             <li onClick={() => setCategoryId(i)} className={categoryId === i ? "active" : ""} key={obj.name}>
               {obj.name}
             </li>
           ))}
         </ul>
         <input
-          value={searchValue}
           onChange={(e) => setSearchValue(e.target.value)}
           className="search-input"
           placeholder="Поиск по названию"
@@ -48,7 +48,7 @@ function App() {
       </div>
       <div className="content">
         {isLoading ? (
-          <h2>Идёт загрузка...</h2>
+          <h2>Loading...</h2>
         ) : (
           collections
             .filter((obj) => obj.name.toLowerCase().includes(searchValue.toLowerCase()))
@@ -64,6 +64,4 @@ function App() {
       </ul>
     </div>
   );
-}
-
-export default App;
+};
